@@ -147,38 +147,3 @@ class SocketConnector:
     #     if self.__keep_alive_thread is not None:
     #         self.alive =False
 
-# if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("-c", "--command", help="It defines the command that needs to be executed")
-    # args = parser.parse_args()
-    # if True:
-        # socks = SocketConnector(host='10.66.52.23', port='1463', username="Zscaler", password="Admin$123")
-        #socks.connect()
-        
-        # exit_code = socks.run("dir", cwd="C:/Users/")
-        # exit_code= socks.pull_proc_info(procid=exit_code.get("id"))
-        # print(exit_code)
-        # exit_code = socks.disconnect()
-        # print(exit_code)
-    #     # time.sleep(18)
-    #     if exit_code.get("status"):
-    #         exit_code = socks.pull_proc_info(procid=exit_code.get("id"))
-    #         print(exit_code)
-    #     # exit_code = socks.run("tracert google.com")
-    #     # exit_code = socks.pull_proc_info(procid=exit_code.get("id"),wait_for_output=True)
-    #     # print(exit_code)
-    # # socks.run("dir")
-    #     # del(socks)
-    # # socks.disconnect()
-    # socks.broadcast_task(task= {"Task": "EVENG", "Function": "get_something"})
-    # # socks_o = SocketConnector(host='10.66.52.23', port='1463', username="Zscaler", password="Admin$123")
-    # #     #socks.connect()
-    # # exit_code = socks_o.run("tracert google.com")
-    # time.sleep(300)
-    # # exit_code = socks.run('dir')
-    # # print(exit_code)
-    # # if exit_code == '0':
-    # #     print(f'Successfully executed command \'{args.command}\'')
-    # # else:
-    # #     print(f'Could not execute command \'{args.command}\'')
-    # #     #raise Exception(f'Could not execute command \'{args.command}\'')
