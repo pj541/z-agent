@@ -1,9 +1,9 @@
 import setuptools
 
-VERSION = '{{VERSION_PLACEHOLDER}}'
+# VERSION = '{{VERSION_PLACEHOLDER}}'
 setuptools.setup(
     name="z-agent",
-    version=VERSION,
+    version="0.1.0",
     author="Prajwal",
     author_email="pkumarjha@zscaler.com",
     long_description_content_type="text/markdown",
