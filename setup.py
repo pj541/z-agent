@@ -12,7 +12,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=["websockets", "asyncio"],
+    install_requires=["websockets", "asyncio", "getpass"],
     packages=setuptools.find_packages(),
     python_requires=">=3.8",
     entry_points={
