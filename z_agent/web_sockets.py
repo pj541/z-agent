@@ -88,7 +88,7 @@ class SocketConnector:
             data =json.loads(self.loop.run_until_complete(self.__validate_conn()))
             self.busy=False
             if not data.get('status'):
-                return {"status": False, "message": data.get("message")}
+                return {"status": False, "exit_code":"1", "message": data.get("message")}
             return {"status": False, "message": f"{ex}"}
     def pull_proc_info(self, procid:str, wait_for_output=False):
         data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
