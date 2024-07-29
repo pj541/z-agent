@@ -27,7 +27,8 @@ class SocketConnector:
         # self.alive = False
         self.busy = False
         self.loggers= loggers if loggers else logging.Logger(name="agent", level="INFO")
-        self.run(command="net session")
+        ret_data = self.run(command="net session")
+        assert ret_data.get('status'), ret_data
 
     def __keep_alive(self):
         try:
@@ -38,9 +39,7 @@ class SocketConnector:
                     break
         except Exception as E:
             self.loggers.debug(f"{E}")
-        finally:
             return {"status": False, "message":f"{E}"}
-
 
     def connect(self, keep_alive=True):
         conn = None
@@ -66,6 +65,12 @@ class SocketConnector:
             self.loggers.error(f"Failed to establish connection with {self.URL}")
         
         return conn
+    async def __validate_conn(self):
+        try:
+            await self.conn.send("keep-alive")
+            return await self.conn.recv()
+        except Exception as E:
+            return json.dumps({"status": False, "message": f"{E}"})
 
     def run(self, command, cwd=None, keep_alive=True):
         try:
@@ -79,8 +84,12 @@ class SocketConnector:
             self.busy=False
             return data
         except Exception as ex:
-            self.loggers.warning(f"Failed to execute {command =}. {ex} self.busy = {self.busy}")
-            return {"status": False, "message": f"{ex} self.busy = {self.busy}"}
+            self.loggers.warning(f"Failed to execute {command =}. {ex}")
+            data =json.loads(self.loop.run_until_complete(self.__validate_conn()))
+            self.busy=False
+            if not data.get('status'):
+                return {"status": False, "message": data.get("message")}
+            return {"status": False, "message": f"{ex}"}
     def pull_proc_info(self, procid:str, wait_for_output=False):
         data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
         if wait_for_output:
@@ -95,7 +104,7 @@ class SocketConnector:
             self.conn = await self.connect(keep_alive=keep_alive)
         await self.conn.send(command)
         return await self.conn.recv()
-    
+
     async def __disconnect(self):
         if self.conn is not None:
             await self.conn.send("close")
@@ -118,6 +127,7 @@ class SocketConnector:
             return data
         except Exception as ex:
             self.loggers.warning(f"Failed to disconnect. {ex}")
+            self.busy = False
             return {"status": False, "message": f"{ex}"}
     
     def broadcast_task(self , task:dict):
