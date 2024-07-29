@@ -150,8 +150,8 @@ class SocketConnector:
             return exit_code
         except Exception as E:
             self.loggers.debug(f"{E}")
-        finally:
             return {"status": False, "message":f"{E}"}
+
     # def __del__(self):
     #     print("\n\nSomething\n\n")
     #     if self.__keep_alive_thread is not None:
