@@ -84,11 +84,11 @@ class SocketConnector:
     def pull_proc_info(self, procid:str, wait_for_output=False):
         data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
         if wait_for_output:
-            while not data.get('status') and data.get('exit_code') is not None:
+            while not data.get('status') and data.get('exit_code') is None:
                 time.sleep(5)
                 data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
-        
         return data
+
     async def __execute_command(self, command, keep_alive=True):
         if self.conn is None:
             self.loggers.debug(f"Connection object is None. creating connection with {self.URL}")
@@ -124,8 +124,8 @@ class SocketConnector:
         send_task = self.run(command=f"add_task={json.dumps(task)}", keep_alive=False)
         if not send_task.get('status'):
             return send_task
-        self.pull_proc_info(procid=send_task['id'], wait_for_output=True)
-
+        ret_data = self.pull_proc_info(procid=send_task['id'], wait_for_output=True)
+        return ret_data
     def __get_first_pending_task(self, id=None):
         get_pending_task = self.run(command="fetch_pending_id" if not id else f"fetch_pending_id={id}", keep_alive=False)
         # if not get_pending_task.get('status'):
@@ -146,4 +146,3 @@ class SocketConnector:
     #     print("\n\nSomething\n\n")
     #     if self.__keep_alive_thread is not None:
     #         self.alive =False
-
