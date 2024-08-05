@@ -13,7 +13,7 @@ __author__ = {"Prajwal Kumar Jha": "pkumarjha@zscaler.com"}
 class SocketConnector:
     def __init__(self, host, port, username, password, loggers=None):
         """
-        This class is used to create an instance of SockerConnector, which can be used to connect to a remote machine
+        This class is used to create an instance of SocketConnector, which can be used to connect to a remote machine
         and then execute commands on remote machine.
 
         :param str host: the remote machine's host. (this is localhost ip for now)
@@ -131,8 +131,17 @@ class SocketConnector:
             return {"status": False, "message": f"{ex}"}
     
     def broadcast_task(self , task:dict):
+        if task.get('Task'):
+            temp = task.pop('Task'); task['task']=temp
+        if task.get('Function'):
+            temp = task.pop('Function'); task['function']= temp
+        if task.get('Args'):
+            temp = task.pop('Args'); task['args']= temp
+        if type(task.get('args')) is not list:
+            return {'status': False, 'exit_code': "-2", 'message': "argument key in task is not a list", 'output': "argument key in task is not a list"}
         send_task = self.run(command=f"add_task={json.dumps(task)}", keep_alive=False)
         if not send_task.get('status'):
+            self.loggers.debug(send_task)
             return send_task
         ret_data = self.pull_proc_info(procid=send_task['id'], wait_for_output=True)
         return ret_data
@@ -142,7 +151,7 @@ class SocketConnector:
         #     return get_pending_task
         return get_pending_task
     
-    def exec_pending_task(self):
+    def get_pending_task(self,output=None):
         try:
             exit_code = self.__get_first_pending_task()
             if exit_code.get('status'):
@@ -152,7 +161,9 @@ class SocketConnector:
             self.loggers.debug(f"{E}")
             return {"status": False, "message":f"{E}"}
 
-    # def __del__(self):
-    #     print("\n\nSomething\n\n")
-    #     if self.__keep_alive_thread is not None:
-    #         self.alive =False
+    def set_pending_task_status(self, output):
+        exit_code = self.run(command=f"update_pending_id={json.dumps(output)}", keep_alive=False)
+        if not exit_code.get('status'):
+            self.loggers.warning(exit_code)
+        return exit_code
+        
