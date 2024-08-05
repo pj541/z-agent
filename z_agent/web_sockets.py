@@ -151,7 +151,7 @@ class SocketConnector:
         #     return get_pending_task
         return get_pending_task
     
-    def get_pending_task(self,output=None):
+    def get_pending_task(self):
         try:
             exit_code = self.__get_first_pending_task()
             if exit_code.get('status'):
