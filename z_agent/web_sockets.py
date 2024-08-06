@@ -90,11 +90,12 @@ class SocketConnector:
             if not data.get('status'):
                 return {"status": False, "exit_code":"1", "message": data.get("message")}
             return {"status": False, "message": f"{ex}"}
+
     def pull_proc_info(self, procid:str, wait_for_output=False):
         data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
         if wait_for_output:
             while not data.get('status') and data.get('exit_code') is None:
-                time.sleep(5)
+                time.sleep(7) #thala for a reason
                 data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
         return data
 
