@@ -91,11 +91,11 @@ class SocketConnector:
                 return {"status": False, "exit_code":"1", "message": data.get("message")}
             return {"status": False, "message": f"{ex}"}
 
-    def pull_proc_info(self, procid:str, wait_for_output=False):
+    def pull_proc_info(self, procid:str, wait_for_output=False, interval=7):
         data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
         if wait_for_output:
             while not data.get('status') and data.get('exit_code') is None:
-                time.sleep(7) #thala for a reason
+                time.sleep(interval) #thala for a reason
                 data = self.run(command=f"pull_proc_info={procid}",keep_alive=False)
         return data
 
@@ -138,7 +138,7 @@ class SocketConnector:
             temp = task.pop('Function'); task['function']= temp
         if task.get('Args'):
             temp = task.pop('Args'); task['args']= temp
-        if type(task.get('args')) is not list:
+        if task.get('args') and type(task.get('args')) is not list:
             return {'status': False, 'exit_code': "-2", 'message': "argument key in task is not a list", 'output': "argument key in task is not a list"}
         send_task = self.run(command=f"add_task={json.dumps(task)}", keep_alive=False)
         if not send_task.get('status'):
